@@ -14,9 +14,41 @@ type User struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type Book struct {
+	gorm.Model
+	ID          int    `gorm:"primaryKey"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"`
+	Author      string `json:"author"`
+	CatID       int    `json:"catID" binding:"required"`
+}
+
+type BookCategory struct {
+	ID   int    `gorm:"primaryKey"`
+	Name string `json:"name" binding:"required"`
+	gorm.Model
+}
+
 func (user *User) CreateUserRecord() error {
 	result := database.GlobalDB.Create(&user)
 
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (book *Book) CreateBookRecord() error {
+	result := database.GlobalDB.Create(&book)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (bookCat *BookCategory) CreateBookCategoryRecord() error {
+	result := database.GlobalDB.Create(&bookCat)
 	if result.Error != nil {
 		return result.Error
 	}

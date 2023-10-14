@@ -19,46 +19,6 @@ type LoginResponse struct {
 	RefreshToken string `json:"RefreshToken"`
 }
 
-func Signup(contex *gin.Context) {
-	var user models.User
-	err := contex.ShouldBindJSON(&user)
-
-	if err != nil {
-		log.Println(err)
-		contex.JSON(400, gin.H{
-			"Error": "Invalid Inputs !",
-		})
-		contex.Abort()
-		return
-	}
-
-	err = user.HashPassword(user.Password)
-
-	if err != nil {
-		log.Println(err.Error())
-		contex.JSON(500, gin.H{
-			"Error": "Error Hashing Password !",
-		})
-		contex.Abort()
-		return
-	}
-
-	err = user.CreateUserRecord()
-
-	if err != nil {
-		log.Println(err)
-		contex.JSON(500, gin.H{
-			"Error": "Error Creating User",
-		})
-		contex.Abort()
-		return
-	}
-
-	contex.JSON(200, gin.H{
-		"Message": "Sucessfully Register",
-	})
-}
-
 func Login(c *gin.Context) {
 	var payload LoginPayload
 	var user models.User
@@ -116,4 +76,102 @@ func Login(c *gin.Context) {
 		RefreshToken: signedtoken,
 	}
 	c.JSON(200, tokenResponse)
+}
+
+func Signup(contex *gin.Context) {
+	var user models.User
+	err := contex.ShouldBindJSON(&user)
+
+	if err != nil {
+		log.Println(err)
+		contex.JSON(400, gin.H{
+			"Error": "Invalid Inputs !",
+		})
+		contex.Abort()
+		return
+	}
+
+	err = user.HashPassword(user.Password)
+
+	if err != nil {
+		log.Println(err.Error())
+		contex.JSON(500, gin.H{
+			"Error": "Error Hashing Password !",
+		})
+		contex.Abort()
+		return
+	}
+
+	err = user.CreateUserRecord()
+
+	if err != nil {
+		log.Println(err)
+		contex.JSON(500, gin.H{
+			"Error": "Error Creating User",
+		})
+		contex.Abort()
+		return
+	}
+
+	contex.JSON(200, gin.H{
+		"Message": "Sucessfully Register",
+	})
+}
+
+func CreateBook(contex *gin.Context) {
+	var book models.Book
+	err := contex.ShouldBindJSON(&book)
+
+	if err != nil {
+		log.Println(err)
+
+		contex.JSON(400, gin.H{
+			"Error": "Invalid Input !",
+		})
+		contex.Abort()
+		return
+	}
+
+	err = book.CreateBookRecord()
+
+	if err != nil {
+		log.Println(err)
+		contex.JSON(500, gin.H{
+			"Error": "Internal Server Error !",
+		})
+	}
+
+	contex.JSON(200, gin.H{
+		"Message": "Successfully added !",
+	})
+}
+
+func CreateBookCat(contex *gin.Context) {
+	var category models.BookCategory
+	err := contex.ShouldBindJSON(&category)
+
+	if err != nil {
+		log.Println(err)
+		contex.JSON(400, gin.H{
+			"Error": "Invalid Inputs",
+		})
+		contex.Abort()
+		return
+	}
+
+	err = category.CreateBookCategoryRecord()
+
+	if err != nil {
+		log.Println(err)
+		contex.JSON(500, gin.H{
+			"Error": "Internal Server Error !",
+		})
+		contex.Abort()
+		return
+	}
+
+	contex.JSON(200, gin.H{
+		"Message": "Book Successfully Added !",
+	})
+
 }

@@ -15,7 +15,7 @@ func main() {
 		log.Fatalln("could not create database", err)
 	}
 
-	database.GlobalDB.AutoMigrate(&models.User{})
+	database.GlobalDB.AutoMigrate(&models.User{}, &models.Book{}, &models.BookCategory{})
 
 	r := setupRouter()
 
@@ -40,6 +40,10 @@ func setupRouter() *gin.Engine {
 			public.POST("/login", controllers.Login)
 			// Add the signup route
 			public.POST("/signup", controllers.Signup)
+			//Create Book Cat Route
+			public.POST("/createBookCat", controllers.CreateBookCat)
+			//Create Book Route
+			public.POST("/createBook", controllers.CreateBook)
 		}
 		// Add the signup route
 		protected := api.Group("/protected").Use(middlewares.Authz())
